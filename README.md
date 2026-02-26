@@ -40,21 +40,21 @@ To reconfigure settings, copy this macro into your `printer.cfg`:
 
 ``` ini
 [gcode_macro _PUNPUTSHAPING_VARS]
-variable_api: "local"														                #API options: icanhazdadjoke, official, norris, jokeapi, local
-variable_loop_duration: 900						                          #15 minutes default
-variable_loop_drift: 30							                            #30 seconds default
-variable_only_while_printing: True                              #Execute only during state of Printing
+variable_api: "local"                                           #API options: icanhazdadjoke, official, norris, jokeapi, local
 variable_loop_at_startup: True                                       #Begin punput shaping at print start
+variable_loop_drift: 30                                         #30 seconds default
+variable_loop_duration: 900                                     #15 minutes default
+variable_only_while_printing: True                              #Execute only during state of Printing
 gcode:
 ```
 
 | Variable | Purpose | Default | Notes |
 | --- | --- | --- | --- |
 | `variable_api` | Selects joke source from supported APIs | `local` | Options: icanhazdadjoke, official, norris, jokeapi, local |
-| `variable_punputshaping_loop_duration` | Time between jokes (seconds) | `900` | 900 = every 15 minutes <br> ⚠️ **Be cautious of overusing Open API calls!** |
-| `variable_punputshaping_loop_drift` | Random timing variation (± seconds) | `30` | Prevents perfectly fixed intervals |
-| `variable_only_while_printing` | Runs only during active prints | `True` | Disabled when printer is idle |
 | `variable_loop_at_startup` | Starts loop automatically | `True` | Otherwise execute `PunputShaping` manually or from another macro |
+| `variable_only_while_printing` | Runs only during active prints | `True` | Disabled when printer is idle |
+| `variable_punputshaping_loop_drift` | Random timing variation (± seconds) | `30` | Prevents perfectly fixed intervals |
+| `variable_punputshaping_loop_duration` | Time between jokes (seconds) | `900` | 900 = every 15 minutes <br> ⚠️ **Be cautious of overusing Open API calls!** |
 
 ---
 
