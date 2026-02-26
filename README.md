@@ -1,6 +1,8 @@
 # 🤣 punput_shaping
 
-Open API comedy for your printer — now shaping for maximum comedic resonance.
+Open-API powered comedy for your printer — now shaping for maximum comedic resonance.
+
+**Punput Shaping periodically fetches jokes from an API and sends them to your Klipper console.**
 
 [View example output](example.png)
 
@@ -10,81 +12,52 @@ Open API comedy for your printer — now shaping for maximum comedic resonance.
 
 ## 📦 Installation
 
-Clone the repository into your Klipper config folder:
+- Clone the repository into your Klipper config folder:
 
 ```bash
 git clone https://github.com/drewgwallace/punput_shaping.git ~/printer_data/config/punput_shaping
 ```
 
----
-
-## ⚙️ Setup Instructions
-
-### 1. Include .cfg file
-
-Add this line to your `printer.cfg` to include the repo’s macros and configs:
+- Add this line to your `printer.cfg` to include the repo’s macros and configs:
 
 ```ini
 [include punput_shaping/punput_shaper.cfg]
 ```
 
----
+- **(Optional)** Add a console filter to Mainsail and hide command logs:
 
-### 2. Choose Your Joke Source
+  - Navigate to **Settings → Console → Filters → Add Filter**
+  - **Name**: `PunputShaper`
+  - **Regex**: `.*Command \{punput.*\}.*`
 
-#### 🟢 Online Sources
 
-| Source         | Link                                                  | Description                              |
-|------------------|----------------------------------------------------------|------------------------------------------|
-| `icanhazdadjoke` | [icanhazdadjoke.com](https://icanhazdadjoke.com/api)     | Classic dad jokes (default)              |
-| `officialjoke`   | [Official Joke API](https://github.com/15Dkatz/official_joke_api) | Programming/general jokes       |
-| `norris`         | [Chuck Norris API](https://api.chucknorris.io/)          | Random Chuck Norris facts                |
-| `jokeapi`        | [JokeAPI](https://jokeapi.dev/)                           | One-liner programming jokes              |
-
-#### 🔵 Offline Mode (No Internet Required)
-
-| Source         | Link                                                  | Description                              |
-|------------------|----------------------------------------------------------|------------------------------------------|
-| `local` |  [`punput.txt`](punput.txt)     | A collection of 3D Printing puns, jokes, and comments              |
-
-You can edit or replace this file with your own printer-themed puns.
+- Restart Klipper.
 
 ---
 
-### 3. Set the Python Script Path
+### ⚙️ Configuration
 
-In `printer.cfg`, customize the path and source:
+To reconfigure settings, copy this macro into your `printer.cfg`:
 
-- `<YOUR_USER>` → your actual username  
-- `<YOUR_SOURCE>` → one of the joke sources listed above
-
-```ini
-[gcode_shell_command punput]
-command: python /home/<YOUR_USER>/printer_data/config/punput_shaping/punput_shaper.py <YOUR_SOURCE>
+``` ini
+[gcode_macro PunputShaping]
+variable_api: "local"                                            # API options: icanhazdadjoke, official, norris, jokeapi, local
+variable_punputshaping_loop_duration: 900                        # 15 minutes default
+variable_punputshaping_loop_drift: 30                            # 30 seconds default
+variable_only_while_printing: True                               # Execute only during state of Printing
+variable_start_at_boot: True                                     # Begin punput shaping at print start
 ```
 
-Example using local source, [`punput.txt`](punput.txt):
-
-```ini
-[gcode_shell_command punput]
-command: python /home/pi/printer_data/config/punput_shaping/punput_shaper.py local
-```
-
----
-
-## 🧪 How to Use
+| Variable | Purpose | Default | Notes |
+| --- | --- | --- | --- |
+| `variable_api` | Selects joke source from supported APIs | `local` | Options: icanhazdadjoke, official, norris, jokeapi, local |
+| `variable_punputshaping_loop_duration` | Time between jokes (seconds) | `900` | 900 = every 15 minutes <br> ⚠️ **Be cautious of overusing Open API calls!** |
+| `variable_punputshaping_loop_drift` | Random timing variation (± seconds) | `30` | Prevents perfectly fixed intervals |
+| `variable_only_while_printing` | Runs only during active prints | `True` | Disabled when printer is idle |
+| `variable_start_at_boot` | Starts loop automatically | `True` | Otherwise execute `PunputShaping` manually or from another macro |
 
 
-Call the **PunputShaping** macro manually from the Klipper console, or automatically inside another macro like print_start.
 
-For example, adding this loop to the end of your `print_start` macro will automatically run every 15 minutes (by default) while printing:
-
-```ini
-[gcode_macro print_start]
-gcode:
-    ...
-    UPDATE_DELAYED_GCODE ID=PunputShaping_Loop DURATION={printer["gcode_macro PunputShaping"].punputshaping_loop_duration}
-```
 
 ---
 
@@ -97,7 +70,7 @@ Append the following to your moonraker.conf to enable updates:
 ```ini
 [update_manager punput_shaping]
 type: git_repo
-origin: https://github.com/drewgwallace/punput_shaping.git
+origin: https://github.com/IdleStep/punput_shaping.git
 path: ~/printer_data/config/punput_shaping
 primary_branch: main
 is_system_service: False
@@ -110,44 +83,4 @@ You may be missing a required library. Install it with:
 
 ```bash
 sudo apt install python3-requests  # Debian/Ubuntu-based distros
-```
-
-### 🧪 Test the Shell Command or Macro
-
-Run manually from the Klipper console:
-
-```ini
-PunputShaping
-RUN_SHELL_COMMAND CMD=punput
-```
-
-### 🧹 Console Cleanup in Mainsail
-
-Add a console filter to hide command logs:
-
-- Navigate to **Settings → Console → Filters → Add Filter**
-- **Name**: `PunputShaper`
-- **Regex**: `.*Command \{punput.*\}.*`
-
-### ⏱️ Adjust Loop Frequency
-
-Copy into your `printer.cfg` to set how often the macro runs by overriding `variable_punputshaping_loop_duration` (in seconds):
-
-```ini
-[gcode_macro PunputShaping]
-variable_punputshaping_loop_duration: 900  # Seconds
-gcode:
-    RUN_SHELL_COMMAND CMD=punput
-```
-> ⚠️ **Be cautious of overusing Open API calls!**
-
-### ⏳️ Randomize Loop Frequency
-
-Copy into your `printer.cfg` to set how often the macro runs by overriding `variable_punputshaping_loop_drift` (in seconds):
-
-```ini
-[gcode_macro PunputShaping]
-variable_punputshaping_loop_drift: 30	# Seconds, in positive and negative direction
-gcode:
-    RUN_SHELL_COMMAND CMD=punput
 ```
