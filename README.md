@@ -15,7 +15,7 @@ Open-API powered comedy for your printer — now shaping for maximum comedic res
 - Clone the repository into your Klipper config folder:
 
 ```bash
-git clone https://github.com/drewgwallace/punput_shaping.git ~/printer_data/config/punput_shaping
+git clone https://github.com/IdleStep/punput_shaping.git ~/printer_data/config/punput_shaping
 ```
 
 - Add this line to your `printer.cfg` to include the repo’s macros and configs:
